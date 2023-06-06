@@ -1,9 +1,53 @@
 ﻿@page "/"
+<h1>Hello,world</h1>
 
-<PageTitle>Index</PageTitle>
+@foreach(Pizza item in State.Menu.Pizzas)
+{
+    <div class="row">
+        <div class="col">name:@item.Name</div>
+        <div class="col">price:@($"{item.Price:0.00}")</div>
+        <div class="col">SpicyImage@(SpicinessImage(item.Spiciness))</div>
+        <div class="col">
+            <button class="btn btn-primary" @onclick="@(()=>AddToBasket(item))">Add To Basket</button>
+        </div>
+    </div>
+}
+@if(!State.Basket.Orders.Any())
+{
+    <h1>You Have No Item</h1>
+}else
+{
+    <h1>Your current Item</h1>
+    @foreach(var(pizza,pos) in State.Basket.Orders.Select((id,pos)=>(State.Menu.GetPizza(id),pos)))
+    {
+        <div class="row">
+            <div class="col">@pizza!.Name</div>
+            <div class="col">price:@($"{pizza.Price:0.00}")</div>
+            <div class="col">
+                <button class="btn btn-primary" @onclick="()=>RemoveFromBasket(pos)" >Remove From Basket</button>
+            </div>
+        </div>
+    }
+    <h2>TotalPRICE:@TotalPrice</h2>
+}
+@State.ToJson();
+@code{
+    private State State { get; set; } = new State(); 
+    protected override void OnInitialized()
+    {
+        State.Menu.Add(new Pizza(1, "pizza1", 10, Spiciness.None));
+        State.Menu.Add(new Pizza(2, "pizza2", 20, Spiciness.Hot));
+        State.Menu.Add(new Pizza(3, "pizza3", 30, Spiciness.Spicy));
+    }
+    private string SpicinessImage(Spiciness spiciness)
+    => $"/picture/{spiciness.ToString().ToLower()}.png";
 
-<h1>Hello, world!</h1>
+    private void AddToBasket(Pizza pizza)
+    => State.Basket.Add(pizza.Id);
 
-Welcome to your new app.
+    private void RemoveFromBasket(int pos)
+    => State.Basket.RemoveAt(pos);
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    private decimal TotalPrice
+    => State.Basket.Orders.Sum(id => State.Menu.GetPizza(id)!.Price);
+}

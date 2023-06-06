@@ -12,6 +12,6 @@ namespace BlazorStep4.Shared
         public List<int> Orders { get; set; } = new List<int>();
         public bool HasPaid { get; set; }
         public void Add(int id)=>Orders.Add(id);
-        public void Remove(int pos)=>Orders.RemoveAt(pos);
+        public void RemoveAt(int pos)=>Orders.RemoveAt(pos);
     }
 }
