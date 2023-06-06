@@ -31,6 +31,20 @@
     <h2>TotalPRICE:@TotalPrice</h2>
 }
 @State.ToJson();
+<hr />
+<h1>Please Enter Your Detail</h1>
+<EditForm Model="State.Basket.Customer" OnValidSubmit="PlaceOrder">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <ValidationSummary></ValidationSummary>
+    <fieldset>
+        <div class="row mb-2">
+            <label class="col-2">Street</label>
+            <InputText class="col-4" @bind-Value="State.Basket.Customer.Street"></InputText>
+            <ValidationMessage For="@(()=>State.Basket.Customer.Street)"></ValidationMessage>
+        </div>
+        <button class="btn btn-primary" @onclick="PlaceOrder">CheckOut</button>
+    </fieldset>
+</EditForm>
 @code{
     private State State { get; set; } = new State(); 
     protected override void OnInitialized()
@@ -50,4 +64,8 @@
 
     private decimal TotalPrice
     => State.Basket.Orders.Sum(id => State.Menu.GetPizza(id)!.Price);
+    private void PlaceOrder()
+    {
+        Console.WriteLine("ccc");
+    }
 }
